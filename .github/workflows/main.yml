@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Použij nejnovější verzi
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4  # Použij nejnovější verzi
         with:
           python-version: '3.8'
 
@@ -27,7 +27,7 @@ jobs:
         run: python trading_analyzer.py
 
       - name: Upload scores to GitHub
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3  # Aktualizováno na nejnovější verzi
         with:
           name: forex_scores
           path: forex_scores.txt
