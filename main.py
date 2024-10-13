@@ -6,8 +6,8 @@ import requests
 import schedule
 
 # Konfigurace pro Notion
-NOTION_DATABASE_ID = 'tvoje_notion_databaze_id'
-NOTION_API_TOKEN = 'tvůj_notion_api_token'
+NOTION_DATABASE_ID = '11639f192ac980c58282ec2d164ded5b'
+NOTION_API_TOKEN = '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'
 NOTION_API_URL = f'https://api.notion.com/v1/pages'
 
 # Přihlašovací údaje pro Trading Analyzer
