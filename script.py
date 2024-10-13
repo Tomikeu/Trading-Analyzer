@@ -25,16 +25,23 @@ try:
     password_field.send_keys(PASSWORD)
     password_field.send_keys(Keys.RETURN)
 
-    # Čekání na načtení další stránky
+    # Čekání na načtení hlavní stránky
     time.sleep(5)  # Můžeš přizpůsobit podle potřeby
 
-    # Zde získat skóre forex párů (musíš upravit selektory podle struktury stránky)
-    # Například pokud skóre má třídu 'score', použij následující kód
-    scores = driver.find_elements(By.CLASS_NAME, 'score')  # Změň na správnou třídu nebo jiný selektor
+    # Najdi a klikni na Score
+    score_button = driver.find_element(By.XPATH, "//div[contains(text(), 'Score')]")
+    score_button.click()
+
+    # Čekání na načtení dat po kliknutí na Score
+    time.sleep(3)  # Můžeš přizpůsobit podle potřeby
+
+    # Získání všech skóre
+    # Vytvoříme XPath, který vyhledá všechny divy s textem skóre
+    score_elements = driver.find_elements(By.XPATH, "//div[@class='flex h-14 flex-1 items-center justify-center px-2 py-3 text-center']")
 
     # Ulož skóre do souboru nebo je vypiš
     with open('forex_scores.txt', 'w') as file:
-        for score in scores:
+        for score in score_elements:
             file.write(score.text + '\n')
             print(score.text)
 
