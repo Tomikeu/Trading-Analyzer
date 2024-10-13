@@ -1,2 +1,4 @@
-gspread
-oauth2client
+selenium
+requests
+schedule
+notion-client
