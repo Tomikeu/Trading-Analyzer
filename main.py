@@ -4,11 +4,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import requests
 import schedule
-import notion-client
 
 # Konfigurace pro Notion
 NOTION_DATABASE_ID = '11e39f192ac980f6b693fcb9a6c39484'
-NOTION_API_TOKEN = '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'
+NOTION_API_TOKEN = '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'
 NOTION_API_URL = f'https://api.notion.com/v1/pages'
 
 # Přihlašovací údaje pro Trading Analyzer
