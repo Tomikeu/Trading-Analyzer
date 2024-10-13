@@ -12,8 +12,8 @@ NOTION_API_URL = f'https://api.notion.com/v1/pages'
 
 # Přihlašovací údaje pro Trading Analyzer
 TRADING_ANALYZER_URL = 'https://platform.tradinganalyzer.ai/login'
-USERNAME = 'tvé_uživatelské_jméno'
-PASSWORD = 'tvé_heslo'
+USERNAME = 'thomasoffc12@gmail.com'
+PASSWORD = 'Hakirama99@'
 
 # Funkce pro přihlášení a získání score
 def get_score():
