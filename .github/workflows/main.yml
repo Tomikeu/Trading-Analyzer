@@ -1,41 +1,31 @@
-name: Extract Forex Scores
+name: Update Trading Score
 
 on:
   schedule:
-    - cron: '*/1 * * * *'  # Spouští každou minutu, můžeš upravit podle potřeby
-  workflow_dispatch:
+    - cron: '0 * * * *'  # Spustí se každou hodinu
+  workflow_dispatch:  # Umožňuje manuální spuštění
 
 jobs:
-  extract_scores:
+  update-score:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3  # Použij nejnovější verzi
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v4  # Použij nejnovější verzi
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install selenium
+          pip install -r requirements.txt
 
-      - name: Run Trading Analyzer script
-        run: python trading_analyzer.py
-
-      - name: Display scores
-        run: |
-          if [ -f forex_scores.txt ]; then
-            cat forex_scores.txt
-          else
-            echo "File forex_scores.txt not found."
-          fi
-
-      - name: Upload scores to GitHub
-        uses: actions/upload-artifact@v3  # Aktualizováno na nejnovější verzi
-        with:
-          name: forex_scores
-          path: forex_scores.txt
+      - name: Run the script
+        env:
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: python main.py
