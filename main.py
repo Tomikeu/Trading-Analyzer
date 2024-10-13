@@ -6,7 +6,7 @@ import requests
 import schedule
 
 # Konfigurace pro Notion
-NOTION_DATABASE_ID = '11639f192ac980c58282ec2d164ded5b'
+NOTION_DATABASE_ID = '11e39f192ac980f6b693fcb9a6c39484'
 NOTION_API_TOKEN = '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'
 NOTION_API_URL = f'https://api.notion.com/v1/pages'
 
