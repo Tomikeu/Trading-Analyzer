@@ -5,13 +5,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
 
-# Načti své přihlašovací údaje z proměnných prostředí
-USERNAME = os.getenv('USERNAME')  # Název proměnné prostředí pro uživatelské jméno
-PASSWORD = os.getenv('PASSWORD')  # Název proměnné prostředí pro heslo
-
-# Ověření, že uživatelské jméno a heslo jsou načteny
-if USERNAME is None or PASSWORD is None:
-    raise ValueError("Chybí přihlašovací údaje. Zkontroluj proměnné prostředí.")
+# Zde zadej své přihlašovací údaje
+USERNAME = os.getenv('thomasoffc12@gmail.com')  # Použij tajný klíč z GitHubu
+PASSWORD = os.getenv('Hakirama99@')  # Použij tajný klíč z GitHubu
 
 # Inicializace webového prohlížeče v headless režimu
 options = webdriver.FirefoxOptions()
@@ -19,6 +15,12 @@ options.add_argument("--headless")  # Přidání headless režimu
 driver = webdriver.Firefox(options=options)
 
 try:
+    # Zkontroluj, jestli jsou uživatelské údaje správně nastaveny
+    if USERNAME is None or PASSWORD is None:
+        print("Ujisti se, že uživatelské jméno a heslo jsou správně nastaveny v proměnných prostředí.")
+        driver.quit()
+        exit()
+
     # Otevři webovou stránku Trading Analyzer
     driver.get('https://platform.tradinganalyzer.ai/login')
 
