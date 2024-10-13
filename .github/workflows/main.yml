@@ -26,6 +26,14 @@ jobs:
       - name: Run Trading Analyzer script
         run: python trading_analyzer.py
 
+      - name: Display scores
+        run: |
+          if [ -f forex_scores.txt ]; then
+            cat forex_scores.txt
+          else
+            echo "File forex_scores.txt not found."
+          fi
+
       - name: Upload scores to GitHub
         uses: actions/upload-artifact@v3  # Aktualizováno na nejnovější verzi
         with:
