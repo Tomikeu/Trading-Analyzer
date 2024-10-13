@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import requests
 import schedule
+import notion-client
 
 # Konfigurace pro Notion
 NOTION_DATABASE_ID = '11e39f192ac980f6b693fcb9a6c39484'
