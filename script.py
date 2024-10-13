@@ -1,1 +1,42 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
 
+# Zde zadej své přihlašovací údaje
+USERNAME = 'thomasoffc12@gmail.com'  # Změň na svůj email
+PASSWORD = 'Hakirama99@'  # Změň na své heslo
+
+# Inicializace webového prohlížeče
+driver = webdriver.Firefox()  # Pokud používáš Chrome, změň na webdriver.Chrome()
+
+try:
+    # Otevři webovou stránku Trading Analyzer
+    driver.get('https://platform.tradinganalyzer.ai/login')
+
+    # Čekání na načtení stránky
+    time.sleep(3)  # Můžeš přizpůsobit podle potřeby
+
+    # Najdi přihlašovací formulář a zadej své údaje
+    username_field = driver.find_element(By.ID, 'email')  # ID pro email
+    password_field = driver.find_element(By.ID, 'password')  # ID pro heslo
+
+    username_field.send_keys(USERNAME)
+    password_field.send_keys(PASSWORD)
+    password_field.send_keys(Keys.RETURN)
+
+    # Čekání na načtení další stránky
+    time.sleep(5)  # Můžeš přizpůsobit podle potřeby
+
+    # Zde získat skóre forex párů (musíš upravit selektory podle struktury stránky)
+    # Například pokud skóre má třídu 'score', použij následující kód
+    scores = driver.find_elements(By.CLASS_NAME, 'score')  # Změň na správnou třídu nebo jiný selektor
+
+    # Ulož skóre do souboru nebo je vypiš
+    with open('forex_scores.txt', 'w') as file:
+        for score in scores:
+            file.write(score.text + '\n')
+            print(score.text)
+
+finally:
+    driver.quit()  # Ukončí prohlížeč
