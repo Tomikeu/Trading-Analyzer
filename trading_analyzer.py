@@ -36,7 +36,6 @@ try:
     time.sleep(3)  # Můžeš přizpůsobit podle potřeby
 
     # Získání všech skóre
-    # Vytvoříme XPath, který vyhledá všechny divy s textem skóre
     score_elements = driver.find_elements(By.XPATH, "//div[@class='flex h-14 flex-1 items-center justify-center px-2 py-3 text-center']")
 
     # Ulož skóre do souboru nebo je vypiš
