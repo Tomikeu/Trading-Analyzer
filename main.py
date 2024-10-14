@@ -1,47 +1,55 @@
+import requests
+import schedule
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-import schedule
-import time
+from notion_client import Client
+import os
+
+# Připojení k Notion
+notion = Client(auth=os.getenv("NOTION_API_TOKEN"))
+database_id = os.getenv("NOTION_DATABASE_ID")
 
 def get_score():
-    # Nastavení prohlížeče Chrome (headless mód pro běh na serveru)
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Běží bez zobrazení GUI
+    # Selenium nastavení
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--headless")  # Spustí prohlížeč bez grafického rozhraní
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    # Inicializace WebDriveru
+    # Spustí Chrome s webdriverem
     driver = webdriver.Chrome(options=chrome_options)
     
-    # Otevření stránky a přihlášení
-    driver.get("https://www.tradinganalyzer.com")
-    
-    # Přihlášení na webovou stránku
+    # Navštíví stránku Trading Analyzer a přihlásí se
+    driver.get('URL_TVÉ_TRADING_STRÁNKY')
     username_input = driver.find_element("name", "username")
     password_input = driver.find_element("name", "password")
-    submit_button = driver.find_element("name", "submit")
-    
-    username_input.send_keys("tvůj_username")  # Tady použij environment proměnné
-    password_input.send_keys("tvé_heslo")
-    submit_button.click()
 
-    # Extrahování výsledků
-    symbol = driver.find_element("xpath", "tvůj_xpath_pro_symbol").text
-    score = driver.find_element("xpath", "tvůj_xpath_pro_score").text
-    
+    username_input.send_keys(os.getenv("USERNAME"))
+    password_input.send_keys(os.getenv("PASSWORD"))
+    driver.find_element("id", "login").click()
+
+    # Extrahuje data
+    symbol = "TEST_SYMBOL"
+    score = 95  # Tady vlož skutečnou logiku pro zisk skóre
+
     driver.quit()
     return symbol, score
 
-# Plánování úkolu
+def update_notion(symbol, score):
+    notion.pages.create(
+        parent={"database_id": database_id},
+        properties={
+            "Symbol": {"title": [{"text": {"content": symbol}}]},
+            "Score": {"number": score}
+        }
+    )
+
 def run():
     symbol, score = get_score()
-    print(f"Symbol: {symbol}, Score: {score}")
+    update_notion(symbol, score)
 
-# Spuštění úkolu každých X minut
-schedule.every(10).minutes.do(run)
+# Naplánování spuštění každou hodinu
+schedule.every().hour.do(run)
 
-# Běží neustále
 while True:
     schedule.run_pending()
-    time.sleep(1)
