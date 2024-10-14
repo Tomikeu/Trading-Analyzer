@@ -7,15 +7,24 @@ on:
 
 jobs:
   update-score:
-    runs-on: ubuntu-22.04  # nebo ubuntu-20.04
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
+
+      # Instalace Chrome a chromedriver
+      - name: Install Chrome and Chromedriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+          sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
 
       - name: Install dependencies
         run: |
