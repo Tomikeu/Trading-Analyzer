@@ -1,88 +1,102 @@
 import time
+import schedule
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+import os
 import requests
-import schedule
 
-# Konfigurace pro Notion
-NOTION_DATABASE_ID = '11e39f192ac980f6b693fcb9a6c39484'
-NOTION_API_TOKEN = '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'
-NOTION_API_URL = f'https://api.notion.com/v1/pages'
-
-# Přihlašovací údaje pro Trading Analyzer
-TRADING_ANALYZER_URL = 'https://platform.tradinganalyzer.ai/login'
-USERNAME = 'thomasoffc12@gmail.com'
-PASSWORD = 'Hakirama99@'
-
-# Funkce pro přihlášení a získání score
+# Funkce pro přihlašování a získání skóre
 def get_score():
-    # Inicializace prohlížeče
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Pro tichý režim bez GUI
-    driver = webdriver.Chrome(options=options)
+    # Nastavení možností Chrome
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Spuštění prohlížeče bez UI
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
+    # Cesta k ovladači Chrome (uprav dle svého prostředí)
+    service = Service(executable_path="/path/to/chromedriver")
+
+    # Spuštění prohlížeče
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    
     try:
-        # Přihlášení k Trading Analyzer
-        driver.get(TRADING_ANALYZER_URL)
-        time.sleep(2)  # Čekání na načtení stránky
-
-        # Najdi a vyplň přihlašovací údaje
-        username_input = driver.find_element(By.NAME, 'username')
-        password_input = driver.find_element(By.NAME, 'password')
-        username_input.send_keys(USERNAME)
-        password_input.send_keys(PASSWORD)
-        password_input.send_keys(Keys.RETURN)
-        time.sleep(5)  # Čekání na přihlášení
-
-        # Navigace na hlavní stránku
-        driver.get('https://platform.tradinganalyzer.ai/')
-        time.sleep(5)  # Čekání na načtení dat
-
-        # Najdi symbol a score
-        symbol = driver.find_element(By.XPATH, '//div[contains(text(),"AUD-NZD")]')
-        score = symbol.find_element(By.XPATH, 'following-sibling::div')
-
-        # Vytáhnout texty
-        symbol_text = symbol.text
-        score_text = score.text
+        # Navigace na přihlašovací stránku
+        driver.get("https://trading-analyzer.com/login")
         
-        return symbol_text, score_text
+        # Čekání na načtení pole pro uživatelské jméno
+        username_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'username'))
+        )
+        username_input.send_keys(os.getenv("USERNAME"))
 
+        # Najdi pole pro heslo a vyplň ho
+        password_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'password'))
+        )
+        password_input.send_keys(os.getenv("PASSWORD"))
+        
+        # Odešli formulář
+        password_input.send_keys(Keys.RETURN)
+        
+        # Čekání na přesměrování a načtení stránky po přihlášení
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'dashboard-element'))
+        )
+
+        # Získání skóre a symbolu (změň selektory podle potřeby)
+        score_element = driver.find_element(By.CLASS_NAME, "score-class")
+        symbol_element = driver.find_element(By.CLASS_NAME, "symbol-class")
+
+        score = score_element.text
+        symbol = symbol_element.text
+
+        return symbol, score
+
+    except Exception as e:
+        print(f"Došlo k chybě: {e}")
     finally:
         driver.quit()
 
-# Funkce pro aktualizaci dat v Notion
+# Funkce pro aktualizaci Notion databáze
 def update_notion(symbol, score):
+    notion_api_url = f"https://api.notion.com/v1/pages"
+    
     headers = {
-        'Authorization': f'Bearer {NOTION_API_TOKEN}',
-        'Content-Type': 'application/json',
-        'Notion-Version': '2022-06-28'
+        "Authorization": f"Bearer {os.getenv('NOTION_API_TOKEN')}",
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28"
     }
     
     data = {
-        'parent': { 'database_id': NOTION_DATABASE_ID },
-        'properties': {
-            'Symbol': { 'title': [{ 'text': { 'content': symbol } }] },
-            'Score': { 'number': int(score) }
+        "parent": {"database_id": os.getenv('NOTION_DATABASE_ID')},
+        "properties": {
+            "Symbol": {"title": [{"text": {"content": symbol}}]},
+            "Score": {"number": int(score)}
         }
     }
 
-    response = requests.post(NOTION_API_URL, headers=headers, json=data)
+    response = requests.post(notion_api_url, headers=headers, json=data)
+    
     if response.status_code == 200:
-        print('Úspěšně aktualizováno v Notion')
+        print("Úspěšně aktualizováno v Notion.")
     else:
-        print('Chyba při aktualizaci v Notion:', response.text)
+        print(f"Chyba při aktualizaci Notion: {response.status_code}, {response.text}")
 
-# Funkce pro spuštění
+# Funkce pro běh celého procesu
 def run():
     symbol, score = get_score()
-    update_notion(symbol, score)
+    if symbol and score:
+        update_notion(symbol, score)
 
-# Naplánování úlohy, která běží každou hodinu
-schedule.every(1).hours.do(run)
+# Naplánuj spuštění každých X minut (nastav dle potřeby)
+schedule.every(10).minutes.do(run)
 
-# Hlavní smyčka
+# Nekonečný cyklus pro běh naplánovaných úloh
 while True:
     schedule.run_pending()
     time.sleep(1)
