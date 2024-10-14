@@ -7,29 +7,27 @@ on:
 
 jobs:
   update-score:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-22.04  # nebo ubuntu-20.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-
-      # Instalace Chrome a chromedriver
-      - name: Install Chrome and Chromedriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
-          sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Install Chrome and Chromedriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver  # Přepíše stávající symlink, pokud existuje
+          sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome  # Přepíše stávající symlink, pokud existuje
 
       - name: Run the script
         env:
