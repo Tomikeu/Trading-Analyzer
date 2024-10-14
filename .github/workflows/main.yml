@@ -7,7 +7,7 @@ on:
 
 jobs:
   update-score:
-    runs-on: ubuntu-22.04  # nebo ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -26,9 +26,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          if [ -f /usr/bin/chromedriver ]; then sudo rm /usr/bin/chromedriver; fi
+          if [ -L /usr/bin/chromedriver ]; then sudo rm /usr/bin/chromedriver; fi
           sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
-          if [ -f /usr/bin/google-chrome ]; then sudo rm /usr/bin/google-chrome; fi
+          if [ -L /usr/bin/google-chrome ]; then sudo rm /usr/bin/google-chrome; fi
           sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
 
       - name: Run the script
