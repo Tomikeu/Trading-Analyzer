@@ -26,14 +26,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          if [ -L /usr/bin/chromedriver ]; then 
-            sudo rm /usr/bin/chromedriver
-          fi
-          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
-          if [ -L /usr/bin/google-chrome ]; then 
-            sudo rm /usr/bin/google-chrome
-          fi
-          sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
+          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+          sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
 
       - name: Run the script
         env:
